@@ -15,7 +15,7 @@ suite('Endpoint', function() {
     // Verify that a proper request was made.
     var lastRequest = client.lastRequest;
     assert.ok(lastRequest, 'a request was made');
-    assert.equal(lastRequest.method,   'get');
+    assert.equal(lastRequest.method,   'GET');
     assert.equal(lastRequest.resource, '/status');
     assert.isNull(lastRequest.params);
 
@@ -37,7 +37,7 @@ suite('Endpoint', function() {
     // Verify that a proper request was made.
     var lastRequest = client.lastRequest;
     assert.ok(lastRequest, 'a request was made');
-    assert.equal(lastRequest.method,   'post');
+    assert.equal(lastRequest.method,   'POST');
     assert.equal(lastRequest.resource, '/session');
     assert.deepEqual(lastRequest.params  , {desiredCapabilities: {}});
 

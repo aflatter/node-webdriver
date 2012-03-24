@@ -66,7 +66,7 @@ suite('Session', function() {
       assert.ok(client.request.calledOnce, 'client receives one request');
 
       args = client.request.getCall(0).args;
-      assert.equal(args[0], 'get',                       'method is not modified');
+      assert.equal(args[0], 'GET',                       'method is not modified');
       assert.equal(args[1], '/session/' + id + '/url',   'resource is scoped');
       assert.equal(args[2], null,                        'params are not defined');
       assert.equal(args[3], callback,                    'callback is passed');
@@ -83,7 +83,7 @@ suite('Session', function() {
       assert.ok(client.request.calledOnce, 'client receives one request');
 
       args = client.request.getCall(0).args;
-      assert.equal(args[0], 'post',                      'method is not modified');
+      assert.equal(args[0], 'POST',                      'method is not modified');
       assert.equal(args[1], '/session/' + id + '/url',   'resource is scoped');
       assert.deepEqual(args[2], {url: url},              'params includes url');
       assert.equal(args[3], callback,                    'callback is passed');
