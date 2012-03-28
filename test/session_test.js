@@ -188,4 +188,73 @@ suite('Session', function() {
       assert.calledWithError(err, callback.lastCall);
     });
   }); // element
+
+  suite('elements', function() {
+    var request
+      , callback
+      , strategy
+      , value
+      , elementIds
+      , err
+      , result;
+
+    setup(function() {
+      strategy   = 'css';
+      value      = '.bar';
+      elementIds = ['el-1', 'el-2'];
+      callback   = spy();
+    });
+
+    test('searches for multiple elements and returns them', function() {
+      session = Session.create({id: 1, client: client});
+      session.elements(strategy, value, callback);
+
+      assert.oneRequest(client, {
+          method: 'POST'
+        , resource: '/session/' + id + '/elements'
+        , params: {using: strategy, value: value}
+      });
+
+      request = client.lastRequest;
+
+      /** Simulate a valid response. */
+      request.callback.apply(null, [null, {value: [{ELEMENT: elementIds[0]}, {ELEMENT: elementIds[1]}]}]);
+
+      assert.ok(callback.calledOnce);
+
+      err    = callback.lastCall.args[0];
+      result = callback.lastCall.args[1];
+
+      assert.isNull(err, 'callback is called without an error');
+      assert.instanceOf(result, Array, 'result is an Array');
+
+      assert.element(result[0], session, elementIds[0]);
+      assert.element(result[1], session, elementIds[1]);
+    });
+
+    test('passes error to the callback if something goes wrong', function() {
+      err = 'Something went wrong.';
+
+      session = Session.create({id: 1, client: client});
+      session.elements(strategy, value, callback);
+
+      assert.oneRequest(client, {
+          method: 'POST'
+        , resource: '/session/' + id + '/elements'
+        , params: {using: strategy, value: value}
+      });
+
+      request = client.lastRequest;
+
+      /** Simulate an invalid response. */
+      request.callback.apply(null, [err]);
+
+      assert.ok(callback.calledOnce);
+
+      err    = callback.lastCall.args[0];
+      result = callback.lastCall.args[1];
+
+      assert.calledWithError(err, callback.lastCall);
+    });
+  }); // elements
 }); // Session
