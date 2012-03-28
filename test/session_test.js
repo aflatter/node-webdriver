@@ -288,4 +288,69 @@ suite('Session', function() {
       });
     });
   }); // quit
+  suite('execute', function() {
+    test('works with a string but without arguments', function() {
+      var fn       = 'hello()'
+        , value    = {}
+        , callback = spy().withArgs(null, value);
+
+
+      session = Session.create({id: 1, client: client});
+      session.execute(fn, callback);
+
+      assert.oneRequest(client, {
+          method: 'POST'
+        , resource: '/session/' + id + '/execute'
+        , params: {script: fn, args: []}
+      });
+
+      // Simulate valid response.
+      client.lastRequest.callback.apply(null, [null, {value: value}]);
+
+      assert.ok(callback.withArgs(null, value).called);
+    });
+
+    test('works with a string and arguments', function() {
+      var fn       = 'hello()'
+        , args     = ['arg1', 'arg2']
+        , value    = {}
+        , callback = spy().withArgs(null, value);
+
+
+      session = Session.create({id: 1, client: client});
+      session.execute(fn, args, callback);
+
+      assert.oneRequest(client, {
+          method: 'POST'
+        , resource: '/session/' + id + '/execute'
+        , params: {script: fn, args: args}
+      });
+
+      // Simulate valid response.
+      client.lastRequest.callback.apply(null, [null, {value: value}]);
+
+      assert.ok(callback.withArgs(null, value).called);
+    });
+
+    test('converts function into a string', function() {
+      var fn       = function() { return 1 + 1; }
+        , value    = {}
+        , callback = spy().withArgs(null, value);
+
+
+      session = Session.create({id: 1, client: client});
+      session.execute(fn, callback);
+
+      assert.oneRequest(client, {
+          method: 'POST'
+        , resource: '/session/' + id + '/execute'
+        , params: {script: 'return 1 + 1;', args: []}
+      });
+
+      // Simulate valid response.
+      client.lastRequest.callback.apply(null, [null, {value: value}]);
+
+      assert.ok(callback.withArgs(null, value).called);
+    });
+  });
 }); // Session
