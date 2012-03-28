@@ -6,12 +6,12 @@ var assert     = require('chai').assert
   , Session    = wd.Session
   , ClientMock = wd.ClientMock;
 
-var assertOneRequest = function(client, opts) {
+assert.oneRequest = function(client, opts) {
   assert.equal(client.callCount, 1, 'Only one request was made.');
-  assertRequest(client.lastRequest, opts);
+  assert.request(client.lastRequest, opts);
 };
 
-var assertRequest = function(request, opts) {
+assert.request = function(request, opts) {
   if (opts.method) {
     assert.equal(request.method, opts.method);
   }
@@ -101,7 +101,7 @@ suite('Session', function() {
       session = Session.create({id: 1, client: client});
       session.url(callback);
 
-      assertOneRequest(client, {
+      assert.oneRequest(client, {
           method: 'GET'
         , resource: '/session/' + id + '/url'
         , params: null
@@ -115,7 +115,7 @@ suite('Session', function() {
       session = Session.create({id: 1, client: client});
       session.url(url, callback);
 
-      assertOneRequest(client, {
+      assert.oneRequest(client, {
           method: 'POST'
         , resource: '/session/' + id + '/url'
         , params: {url: url}
@@ -143,7 +143,7 @@ suite('Session', function() {
       session = Session.create({id: 1, client: client});
       session.element(strategy, value, callback);
 
-      assertOneRequest(client, {
+      assert.oneRequest(client, {
           method: 'POST'
         , resource: '/session/' + id + '/element'
         , params: {using: strategy, value: value}
@@ -169,7 +169,7 @@ suite('Session', function() {
       session = Session.create({id: 1, client: client});
       session.element(strategy, value, callback);
 
-      assertOneRequest(client, {
+      assert.oneRequest(client, {
           method: 'POST'
         , resource: '/session/' + id + '/element'
         , params: {using: strategy, value: value}
