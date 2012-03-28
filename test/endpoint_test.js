@@ -1,3 +1,5 @@
+/*global suite test*/
+
 var assert     = require('chai').assert
   , spy        = require('sinon').spy
   , Endpoint   = require('webdriver/lib/endpoint')

@@ -1,3 +1,5 @@
+/*global suite test*/
+
 var assert  = require('chai').assert
    ,spy     = require('sinon').spy
   , Session = require('webdriver/lib/session');
@@ -32,6 +34,7 @@ suite('Session', function() {
       assert.instanceOf(session, Session);
     });
   }); // constructor
+
   suite('request', function() {
     var method   = 'GET'
       , resource = '/foo'
@@ -54,6 +57,7 @@ suite('Session', function() {
       assert.equal(args[3], callback,                    'callback is not modified');
     });
   }); // request
+
   suite('url', function() {
     test('retrieves url when called without string', function() {
       var client   = fakeClient()
@@ -71,6 +75,7 @@ suite('Session', function() {
       assert.equal(args[2], null,                        'params are not defined');
       assert.equal(args[3], callback,                    'callback is passed');
     });
+
     test('navigates to url when called with a string', function() {
       var client   = fakeClient()
         , session  = Session.create({id: 1, client: client})
