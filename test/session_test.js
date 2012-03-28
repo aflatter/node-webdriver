@@ -1,6 +1,7 @@
 /*global suite test setup*/
 
 var assert     = require('chai').assert
+  , spy        = require('sinon').spy
   , wd         = require('./lib')
   , Session    = wd.Session
   , ClientMock = wd.ClientMock;
@@ -90,4 +91,70 @@ suite('Session', function() {
       assert.equal(request.callback,   callback,                  'callback is passed');
     });
   }); // url
+  suite('element', function() {
+    var request
+      , callback
+      , strategy
+      , value
+      , elementId
+      , err
+      , result;
+
+    setup(function() {
+      strategy  = 'css';
+      value     = '#foo';
+      elementId = 'wd-el-id';
+      callback  = spy();
+    });
+
+    test('searches for an element and returns result', function() {
+      session = Session.create({id: 1, client: client});
+      session.element(strategy, value, callback);
+
+      assert.equal(client.callCount, 1, 'client receives one request');
+
+      request = client.lastRequest;
+      assert.equal(request.method,    'POST', 'uses POST method');
+      assert.equal(request.resource, '/session/' + id + '/element', 'resource is scoped');
+      assert.deepEqual(request.params, {using: strategy, value: value});
+
+      /** Simulate a valid response. */
+      request.callback.apply(null, [null, {value: {ELEMENT: elementId}}]);
+
+      assert.ok(callback.calledOnce);
+
+      err     = callback.lastCall.args[0];
+      result = callback.lastCall.args[1];
+
+      assert.isNull(err, 'callback is called without an error');
+      assert.instanceOf(result,    wd.Element, 'result is an Element');
+      assert.equal(result.id,      elementId,  'element id is read from the response');
+      assert.equal(result.session, session,    'the session passes itself');
+    });
+
+    test('passes error to the callback if something goes wrong', function() {
+      err = 'Something went wrong.';
+
+      session = Session.create({id: 1, client: client});
+      session.element(strategy, value, callback);
+
+      assert.equal(client.callCount, 1, 'client receives one request');
+
+      request = client.lastRequest;
+      assert.equal(request.method,    'POST', 'uses POST method');
+      assert.equal(request.resource, '/session/' + id + '/element', 'resource is scoped');
+      assert.deepEqual(request.params, {using: strategy, value: value});
+
+      /** Simulate an invalid response. */
+      request.callback.apply(null, [err]);
+
+      assert.ok(callback.calledOnce);
+
+      err     = callback.lastCall.args[0];
+      result = callback.lastCall.args[1];
+
+      assert.equal(callback.lastCall.args[0], err, 'error is passed to the callback');
+      assert.isNull(callback.lastCall.args[1], 'callback does not receive a result');
+    });
+  }); // element
 }); // Session
