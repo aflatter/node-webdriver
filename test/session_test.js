@@ -29,6 +29,11 @@ var assertRequest = function(request, opts) {
   }
 };
 
+assert.calledWithError = function(err, call) {
+  assert.equal(call.args[0], err, 'error is passed to the callback');
+  assert.isNull(call.args[1], 'callback does not receive a result');
+};
+
 suite('Session', function() {
   var id   = 1
     , session, client;
@@ -145,7 +150,7 @@ suite('Session', function() {
 
       assert.ok(callback.calledOnce);
 
-      err     = callback.lastCall.args[0];
+      err    = callback.lastCall.args[0];
       result = callback.lastCall.args[1];
 
       assert.isNull(err, 'callback is called without an error');
@@ -173,11 +178,10 @@ suite('Session', function() {
 
       assert.ok(callback.calledOnce);
 
-      err     = callback.lastCall.args[0];
+      err    = callback.lastCall.args[0];
       result = callback.lastCall.args[1];
 
-      assert.equal(callback.lastCall.args[0], err, 'error is passed to the callback');
-      assert.isNull(callback.lastCall.args[1], 'callback does not receive a result');
+      assert.calledWithError(err, callback.lastCall);
     });
   }); // element
 }); // Session
