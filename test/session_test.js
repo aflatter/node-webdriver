@@ -34,6 +34,12 @@ assert.calledWithError = function(err, call) {
   assert.isNull(call.args[1], 'callback does not receive a result');
 };
 
+assert.element = function(actual, session, id) {
+  assert.instanceOf(actual,    wd.Element, 'result is an Element');
+  assert.equal(actual.id,      id,         'element id is read from the response');
+  assert.equal(actual.session, session,    'the session passes itself');
+};
+
 suite('Session', function() {
   var id   = 1
     , session, client;
@@ -154,9 +160,7 @@ suite('Session', function() {
       result = callback.lastCall.args[1];
 
       assert.isNull(err, 'callback is called without an error');
-      assert.instanceOf(result,    wd.Element, 'result is an Element');
-      assert.equal(result.id,      elementId,  'element id is read from the response');
-      assert.equal(result.session, session,    'the session passes itself');
+      assert.element(result, session, elementId);
     });
 
     test('passes error to the callback if something goes wrong', function() {
