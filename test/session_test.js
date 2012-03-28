@@ -274,4 +274,18 @@ suite('Session', function() {
       });
     });
   }); // timeout
+  suite('quit', function() {
+    test('quits the browser', function() {
+      var callback = function() {};
+
+      session = Session.create({id: 1, client: client});
+      session.quit(callback);
+
+      assert.oneRequest(client, {
+          method: 'DELETE'
+        , resource: '/session/' + id
+        , callback: callback
+      });
+    });
+  }); // quit
 }); // Session
