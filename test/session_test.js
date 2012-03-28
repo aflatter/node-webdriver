@@ -6,6 +6,29 @@ var assert     = require('chai').assert
   , Session    = wd.Session
   , ClientMock = wd.ClientMock;
 
+var assertOneRequest = function(client, opts) {
+  assert.equal(client.callCount, 1, 'Only one request was made.');
+  assertRequest(client.lastRequest, opts);
+};
+
+var assertRequest = function(request, opts) {
+  if (opts.method) {
+    assert.equal(request.method, opts.method);
+  }
+
+  if (opts.params) {
+    assert.deepEqual(request.params, opts.params);
+  }
+
+  if (opts.resource) {
+    assert.equal(request.resource, opts.resource);
+  }
+
+  if (opts.callback) {
+    assert.equal(request.callback, opts.callback);
+  }
+};
+
 suite('Session', function() {
   var id   = 1
     , session, client;
@@ -67,13 +90,12 @@ suite('Session', function() {
       session = Session.create({id: 1, client: client});
       session.url(callback);
 
-      assert.equal(client.callCount, 1, 'client receives one request');
-
-      request = client.lastRequest;
-      assert.equal(request.method,   'GET',                     'method is not modified');
-      assert.equal(request.resource, '/session/' + id + '/url', 'resource is scoped');
-      assert.equal(request.params,   null,                      'params are not defined');
-      assert.equal(request.callback, callback,                  'callback is passed');
+      assertOneRequest(client, {
+          method: 'GET'
+        , resource: '/session/' + id + '/url'
+        , params: null
+        , callback: callback
+      });
     });
 
     test('navigates to url when called with a string', function() {
@@ -82,13 +104,12 @@ suite('Session', function() {
       session = Session.create({id: 1, client: client});
       session.url(url, callback);
 
-      assert.equal(client.callCount, 1, 'client receives one request');
-
-      request = client.lastRequest;
-      assert.equal(request.method,     'POST',                    'method is not modified');
-      assert.equal(request.resource,   '/session/' + id + '/url', 'resource is scoped');
-      assert.deepEqual(request.params, {url: url},                'params includes url');
-      assert.equal(request.callback,   callback,                  'callback is passed');
+      assertOneRequest(client, {
+          method: 'POST'
+        , resource: '/session/' + id + '/url'
+        , params: {url: url}
+        , callback: callback
+      });
     });
   }); // url
   suite('element', function() {
@@ -111,12 +132,13 @@ suite('Session', function() {
       session = Session.create({id: 1, client: client});
       session.element(strategy, value, callback);
 
-      assert.equal(client.callCount, 1, 'client receives one request');
+      assertOneRequest(client, {
+          method: 'POST'
+        , resource: '/session/' + id + '/element'
+        , params: {using: strategy, value: value}
+      });
 
       request = client.lastRequest;
-      assert.equal(request.method,    'POST', 'uses POST method');
-      assert.equal(request.resource, '/session/' + id + '/element', 'resource is scoped');
-      assert.deepEqual(request.params, {using: strategy, value: value});
 
       /** Simulate a valid response. */
       request.callback.apply(null, [null, {value: {ELEMENT: elementId}}]);
@@ -138,12 +160,13 @@ suite('Session', function() {
       session = Session.create({id: 1, client: client});
       session.element(strategy, value, callback);
 
-      assert.equal(client.callCount, 1, 'client receives one request');
+      assertOneRequest(client, {
+          method: 'POST'
+        , resource: '/session/' + id + '/element'
+        , params: {using: strategy, value: value}
+      });
 
       request = client.lastRequest;
-      assert.equal(request.method,    'POST', 'uses POST method');
-      assert.equal(request.resource, '/session/' + id + '/element', 'resource is scoped');
-      assert.deepEqual(request.params, {using: strategy, value: value});
 
       /** Simulate an invalid response. */
       request.callback.apply(null, [err]);
