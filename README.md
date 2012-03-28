@@ -25,3 +25,7 @@ Getting started
     });
 
 You might want to take a look at the examples directory.
+
+To run the tests, use `npm install` and then `npm test`. To generate a
+coverage report, use `npm run-script cov` - a HTML report will be made
+available in `cover_html/`.

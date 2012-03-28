@@ -20,7 +20,8 @@
   },
   "files": ["./lib"],
   "scripts": {
-    "test": "cover run mocha"
+    "test": "cover run mocha",
+    "cov": "cover report html"
   },
   "main": "./lib/webdriver.js"
 }
