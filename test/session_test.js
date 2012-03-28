@@ -257,4 +257,21 @@ suite('Session', function() {
       assert.calledWithError(err, callback.lastCall);
     });
   }); // elements
+  suite('timeout', function() {
+    test('attempts to set the timeout to the passed value', function() {
+      var name     = 'a_timeout'
+        , ms       = 1337
+        , callback = function() {};
+
+      session = Session.create({id: 1, client: client});
+      session.timeout(name, ms, callback);
+
+      assert.oneRequest(client, {
+          method: 'POST'
+        , resource: '/session/' + id + '/timeouts/' + name
+        , params: {ms: ms}
+        , callback: callback
+      });
+    });
+  }); // timeout
 }); // Session
