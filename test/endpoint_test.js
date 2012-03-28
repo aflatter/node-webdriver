@@ -2,9 +2,10 @@
 
 var assert     = require('chai').assert
   , spy        = require('sinon').spy
-  , Endpoint   = require('webdriver/lib/endpoint')
-  , Session    = require('webdriver/lib/session')
-  , ClientMock = require('webdriver/lib/client_mock');
+  , wd         = require('./lib')
+  , Endpoint   = wd.Endpoint
+  , Session    = wd.Session
+  , ClientMock = wd.ClientMock;
 
 suite('Endpoint', function() {
   test('status()', function() {
