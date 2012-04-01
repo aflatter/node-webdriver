@@ -45,30 +45,33 @@ suite('Session', function() {
     , session, client;
 
   setup(function() {
-    client = new ClientMock();
+    id      = 1;
+    client  = new ClientMock();
+    session = Session.create({id: id, client: client});
   });
 
   suite('constructor', function() {
-    var caps = {};
+    var caps = {},
+        opts;
 
-    test('making a new instance using .create()', function() {
-      session = Session.create({id: id, client: client, capabilities: caps});
+    setup(function() {
+      opts = {id: id, client: client, capabilities: caps};
+    });
 
+    function matches(session) {
       assert.equal(session.id,           id,     'id is set on the instance');
       assert.equal(session.client,       client, 'client is set on the instance');
       assert.equal(session.capabilities, caps,   'capabilities is set on the instance');
 
       assert.instanceOf(session, Session);
+    }
+
+    test('making a new instance using .create()', function() {
+      matches(Session.create(opts));
     });
 
     test('making a new instance using the new keyword', function() {
-      session = new Session({id: id, client: client, capabilities: caps});
-
-      assert.equal(session.id,           id,     'id is set on the instance');
-      assert.equal(session.client,       client, 'client is set on the instance');
-      assert.equal(session.capabilities, caps,   'capabilities is set on the instance');
-
-      assert.instanceOf(session, Session);
+      matches(new Session(opts));
     });
   }); // constructor
 
@@ -80,16 +83,14 @@ suite('Session', function() {
       , request;
 
     test('scopes all paths to the session', function() {
-      session = Session.create({id: id, client: client});
       session.request(method, resource, params, callback);
 
-      assert.equal(client.callCount, 1, 'client receives one request');
-
-      request = client.lastRequest;
-      assert.equal(request.method,   method,                      'method is not modified');
-      assert.equal(request.resource, '/session/' + id + resource, 'resource is scoped');
-      assert.equal(request.params,   params,                      'params are not modified');
-      assert.equal(request.callback, callback,                    'callback is not modified');
+      assert.oneRequest(client, {
+          method: method
+        , resource: '/session/' + id + resource
+        , params: params
+        , callback: callback
+      });
     });
   }); // request
 
@@ -98,7 +99,6 @@ suite('Session', function() {
       , request;
 
     test('retrieves url when called without string', function() {
-      session = Session.create({id: 1, client: client});
       session.url(callback);
 
       assert.oneRequest(client, {
@@ -112,7 +112,6 @@ suite('Session', function() {
     test('navigates to url when called with a string', function() {
       var url = 'http://example.com';
 
-      session = Session.create({id: 1, client: client});
       session.url(url, callback);
 
       assert.oneRequest(client, {
@@ -140,7 +139,6 @@ suite('Session', function() {
     });
 
     test('searches for an element and returns result', function() {
-      session = Session.create({id: 1, client: client});
       session.element(strategy, value, callback);
 
       assert.oneRequest(client, {
@@ -166,7 +164,6 @@ suite('Session', function() {
     test('passes error to the callback if something goes wrong', function() {
       err = 'Something went wrong.';
 
-      session = Session.create({id: 1, client: client});
       session.element(strategy, value, callback);
 
       assert.oneRequest(client, {
@@ -206,7 +203,6 @@ suite('Session', function() {
     });
 
     test('searches for multiple elements and returns them', function() {
-      session = Session.create({id: 1, client: client});
       session.elements(strategy, value, callback);
 
       assert.oneRequest(client, {
@@ -235,7 +231,6 @@ suite('Session', function() {
     test('passes error to the callback if something goes wrong', function() {
       err = 'Something went wrong.';
 
-      session = Session.create({id: 1, client: client});
       session.elements(strategy, value, callback);
 
       assert.oneRequest(client, {
@@ -263,7 +258,6 @@ suite('Session', function() {
         , ms       = 1337
         , callback = function() {};
 
-      session = Session.create({id: 1, client: client});
       session.timeout(name, ms, callback);
 
       assert.oneRequest(client, {
@@ -278,7 +272,6 @@ suite('Session', function() {
     test('quits the browser', function() {
       var callback = function() {};
 
-      session = Session.create({id: 1, client: client});
       session.quit(callback);
 
       assert.oneRequest(client, {
@@ -294,8 +287,6 @@ suite('Session', function() {
         , value    = {}
         , callback = spy().withArgs(null, value);
 
-
-      session = Session.create({id: 1, client: client});
       session.execute(fn, callback);
 
       assert.oneRequest(client, {
@@ -316,8 +307,6 @@ suite('Session', function() {
         , value    = {}
         , callback = spy().withArgs(null, value);
 
-
-      session = Session.create({id: 1, client: client});
       session.execute(fn, args, callback);
 
       assert.oneRequest(client, {
@@ -338,7 +327,6 @@ suite('Session', function() {
         , callback = spy().withArgs(null, value);
 
 
-      session = Session.create({id: 1, client: client});
       session.execute(fn, callback);
 
       assert.oneRequest(client, {
@@ -352,5 +340,5 @@ suite('Session', function() {
 
       assert.ok(callback.withArgs(null, value).called);
     });
-  });
+  }); // execute
 }); // Session
