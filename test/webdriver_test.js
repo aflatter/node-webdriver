@@ -1,4 +1,5 @@
-var wd     = require('webdriver')
+/*global suite test*/
+var wd     = require('./lib')
   , assert = require('chai').assert
   ;
 
