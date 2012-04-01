@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/aflatter/node-webdriver.png?branch=master)](http://travis-ci.org/aflatter/node-webdriver)
+
 A [webdriver](http://seleniumhq.org/projects/webdriver/) client implementation for [node](http://nodejs.org) with focus on a fluent API and clean error handling.
 
 The canonical home of the project is on
