@@ -1,17 +1,22 @@
-/*global suite test*/
+/*global suite test setup*/
 
 var assert     = require('chai').assert
   , spy        = require('sinon').spy
   , wd         = require('./lib')
   , Endpoint   = wd.Endpoint
   , Session    = wd.Session
-  , ClientMock = wd.ClientMock;
+  , TestHelper = wd.TestHelper;
 
 suite('Endpoint', function() {
+  var client, endpoint;
+
+  setup(function() {
+    client   = TestHelper.mockClient();
+    endpoint = Endpoint.create({client: client});
+  });
+
   test('status()', function() {
-    var client   = new ClientMock()
-      , endpoint = Endpoint.create({client: client})
-      , callback = spy();
+    var callback = spy();
 
     endpoint.status(callback);
 
@@ -31,9 +36,7 @@ suite('Endpoint', function() {
     assert.deepEqual(status, {foo: 'bar'});
   }); // status()
   test('session()', function() {
-    var client   = new ClientMock()
-      , endpoint = Endpoint.create({client: client})
-      , callback = spy();
+    var callback = spy();
 
     endpoint.session(callback);
 

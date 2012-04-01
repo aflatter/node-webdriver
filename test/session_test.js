@@ -4,7 +4,7 @@ var spy        = require('sinon').spy
   , wd         = require('./lib')
   , assert     = wd.assert
   , Session    = wd.Session
-  , ClientMock = wd.ClientMock;
+  , TestHelper = wd.TestHelper;
 
 suite('Session', function() {
   var id   = 1
@@ -12,7 +12,7 @@ suite('Session', function() {
 
   setup(function() {
     id      = 1;
-    client  = new ClientMock();
+    client  = TestHelper.mockClient();
     session = Session.create({id: id, client: client});
   });
 
@@ -44,7 +44,7 @@ suite('Session', function() {
   suite('request', function() {
     var method   = 'GET'
       , resource = '/foo'
-      , params   = null
+      , params   = {}
       , callback = function() {}
       , request;
 
@@ -177,10 +177,8 @@ suite('Session', function() {
         , params: {using: strategy, value: value}
       });
 
-      request = client.lastRequest;
-
       /** Simulate a valid response. */
-      request.callback.apply(null, [null, {value: [{ELEMENT: elementIds[0]}, {ELEMENT: elementIds[1]}]}]);
+      client.lastRequest.callback.apply(null, [null, {value: [{ELEMENT: elementIds[0]}, {ELEMENT: elementIds[1]}]}]);
 
       assert.ok(callback.calledOnce);
 
