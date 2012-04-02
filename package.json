@@ -2,7 +2,7 @@
   "author": "Alexander Flatter <flatter@fastmail.fm>",
   "name": "webdriver",
   "description": "Client for the webdriver protocol.",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "repository": {
     "url": ""
   },
